@@ -9,11 +9,11 @@ import java.io.FileInputStream;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args){
-        try(FileInputStream file = new FileInputStream(new File("src/main/resources/DEF-ALL.xlsx"))){
-            Map<Integer, List<OperatorDto>> data = new HashMap<>();
-            String answer = null;
+    private static Map<Integer, List<OperatorDto>> data;
 
+    static {
+        try(FileInputStream file = new FileInputStream(new File("src/main/resources/DEF-ALL.xlsx"))) {
+            data = new HashMap<>();
             Workbook workbook = new XSSFWorkbook(file);
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -34,15 +34,23 @@ public class Main {
                 codeData.add(operatorDto);
                 data.put(codeCell, codeData);
             }
+        }
+        catch (Exception e) {
+            System.out.println("Не удалось открыть файл");
+        }
+    }
 
-            long startTime = System.nanoTime();
+    public static String getOperator(String number){
+        String answer = null;
+        long startTime = System.nanoTime();
 
-            Integer userCode = Integer.parseInt(args[0].substring(1, 4));
-            int userNumber = Integer.parseInt(args[0].substring(4));
+        try {
+            Integer userCode = Integer.parseInt(number.substring(1, 4));
+            int userNumber = Integer.parseInt(number.substring(4));
 
             List<OperatorDto> searchList = data.get(userCode);
-            if (searchList == null){
-                throw new RuntimeException("Данного номера не существует");
+            if (searchList == null) {
+                return null;
             }
             int start = 0;
             int end = searchList.size() - 1;
@@ -52,31 +60,35 @@ public class Main {
                 int nextStartNumber = mid + 1 < searchList.size() ? searchList.get(mid + 1).getNumber() : Integer.MAX_VALUE;
 
                 if (userNumber >= midStartNumber && userNumber < nextStartNumber) {
-                    if(userNumber > midStartNumber +  searchList.get(mid).getCapacity()){
-                        throw new RuntimeException("Данного номера не существует");
+                    if (userNumber > midStartNumber + searchList.get(mid).getCapacity()) {
+                        return null;
                     }
                     answer = searchList.get(mid).getOperator();
                     break;
-                }
-                else if (userNumber < midStartNumber) {
+                } else if (userNumber < midStartNumber) {
                     end = mid - 1;
-                }
-                else {
+                } else {
                     start = mid + 1;
                 }
             }
 
             long endTime = System.nanoTime();
             System.out.println(endTime - startTime + " ns");
-            if (answer != null) {
-                System.out.println(answer);
-            }
-            else {
-                System.out.println("Данного номера не существует");
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            return answer;
         }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    public static void main(String[] args){
+            String number = "";
+            System.out.println("Введите: \"exit\", чтобы выйти");
+            while(!number.equals("exit")) {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Введите номер в формате:7*");
+                number = scanner.nextLine();
+                System.out.println(getOperator(number));
+            }
     }
 }
