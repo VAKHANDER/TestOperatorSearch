@@ -52,7 +52,7 @@ public class Main {
                 int nextStartNumber = mid + 1 < searchList.size() ? searchList.get(mid + 1).getNumber() : Integer.MAX_VALUE;
 
                 if (userNumber >= midStartNumber && userNumber < nextStartNumber) {
-                    if(userNumber > searchList.get(mid).getNumber() +  searchList.get(mid).getCapacity()){
+                    if(userNumber > midStartNumber +  searchList.get(mid).getCapacity()){
                         throw new RuntimeException("Данного номера не существует");
                     }
                     answer = searchList.get(mid).getOperator();
