@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args){
         try(FileInputStream file = new FileInputStream(new File("src/main/resources/DEF-ALL.xlsx"))){
             Map<Integer, List<OperatorDto>> data = new HashMap<>();
-            String answer = "";
+            String answer = null;
 
             Workbook workbook = new XSSFWorkbook(file);
             Sheet sheet = workbook.getSheetAt(0);
@@ -21,8 +21,7 @@ public class Main {
                 Integer codeCell = (int) row.getCell(0).getNumericCellValue();
                 OperatorDto operatorDto = new OperatorDto((int) row.getCell(1).getNumericCellValue(),
                     row.getCell(2).toString(),
-                    row.getCell(3).toString(),
-                    (int) row.getCell(4).getNumericCellValue());
+                    (int) row.getCell(3).getNumericCellValue());
 
                 List<OperatorDto> codeData = new ArrayList<>();
 
@@ -36,7 +35,6 @@ public class Main {
                 data.put(codeCell, codeData);
             }
 
-            //Таймер он
             long startTime = System.nanoTime();
 
             Integer userCode = Integer.parseInt(args[0].substring(1, 4));
@@ -57,7 +55,7 @@ public class Main {
                     if(userNumber > searchList.get(mid).getNumber() +  searchList.get(mid).getCapacity()){
                         throw new RuntimeException("Данного номера не существует");
                     }
-                    answer = searchList.get(mid).getOperator() + ", " + searchList.get(mid).getLocation();
+                    answer = searchList.get(mid).getOperator();
                     break;
                 } else if (userNumber < midStartNumber) {
                     end = mid - 1;
@@ -66,14 +64,13 @@ public class Main {
                 }
             }
 
-            //Таймер офф
             long endTime = System.nanoTime();
             System.out.println(endTime - startTime + " ns");
-            if (!answer.isEmpty()) {
+            if (answer != null) {
                 System.out.println(answer);
             }
             else {
-                throw new RuntimeException("Данного номера не существует");
+                System.out.println("Данного номера не существует");
             }
 
         } catch (Exception e) {
