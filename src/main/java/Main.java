@@ -57,9 +57,11 @@ public class Main {
                     }
                     answer = searchList.get(mid).getOperator();
                     break;
-                } else if (userNumber < midStartNumber) {
+                }
+                else if (userNumber < midStartNumber) {
                     end = mid - 1;
-                } else {
+                }
+                else {
                     start = mid + 1;
                 }
             }
