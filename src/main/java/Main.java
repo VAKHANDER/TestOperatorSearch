@@ -23,16 +23,7 @@ public class Main {
                     row.getCell(2).toString(),
                     (int) row.getCell(3).getNumericCellValue());
 
-                List<OperatorDto> codeData = new ArrayList<>();
-
-                if(data.containsKey(codeCell)){
-                    codeData = data.get(codeCell);
-                    codeData.add(operatorDto);
-                    continue;
-                }
-
-                codeData.add(operatorDto);
-                data.put(codeCell, codeData);
+                data.computeIfAbsent(codeCell, x -> new ArrayList<>()).add(operatorDto);
             }
         }
         catch (Exception e) {
